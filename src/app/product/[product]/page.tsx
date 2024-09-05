@@ -1,3 +1,5 @@
+'use client'
+import { useCart } from '../../Context';
 import { product } from '../../../../public/demoproduct';
 
 interface Query {
@@ -24,6 +26,11 @@ interface Query {
 const Page = ({ params }: { params: { product: string } }) => {
   const postId = Number(params.product);
   const post = product.find((post) => post.id === postId);
+  const { addToCart } = useCart();
+
+  const handleAddToCartClick = (product: Query) => {
+    addToCart(product);
+  };
   if (!post) {
     return (
       <main>
@@ -74,7 +81,7 @@ const Page = ({ params }: { params: { product: string } }) => {
             <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out">
               Buy Now
             </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out" onClick={()=>handleAddToCartClick(post)}>
               Add to Cart
             </button>
           </div>
