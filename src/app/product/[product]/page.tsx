@@ -9,10 +9,6 @@ interface Query {
   description: string;
   category: string;
   image: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
 }
 
 // export const revalidate = 60;
@@ -57,13 +53,6 @@ const Page = ({ params }: { params: { product: string } }) => {
           {/* Product Title */}
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{post.title}</h1>
           
-          {/* Rating and Reviews */}
-          <div className="flex items-center mb-4">
-            <span className="bg-yellow-400 text-white font-semibold px-2 py-1 rounded">
-              {post.rating.rate}★
-            </span>
-            <span className="text-gray-600 ml-3">{post.rating.count} reviews</span>
-          </div>
 
           {/* Price Section */}
           <div className="text-3xl font-bold text-green-600 mb-2">
