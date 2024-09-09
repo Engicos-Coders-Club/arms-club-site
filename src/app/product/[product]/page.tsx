@@ -1,6 +1,6 @@
-'use client'
-import { useCart } from '../../Context';
-import { product } from '../../../../public/demoproduct';
+"use client";
+import { useCart } from "../../Context";
+import { product } from "../../../../public/demoproduct";
 
 interface Query {
   id: number;
@@ -9,10 +9,6 @@ interface Query {
   description: string;
   category: string;
   image: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
 }
 
 // export const revalidate = 60;
@@ -40,59 +36,56 @@ const Page = ({ params }: { params: { product: string } }) => {
   }
 
   return (
-    <div className='w-full bg-[#FAFAFA] h-screen flex justify-center items-center'>
+    <div className="w-full bg-[#FAFAFA] h-screen flex justify-center items-center">
       <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Product Image Section */}
-        <div className="flex-1">
-          <img
-            src={post.image}
-            alt={post.title}
-            className="w-full h-[400px] object-contain rounded-lg  mix-blend-multiply"
-          />
-        </div>
-
-        {/* Product Details Section */}
-        <div className="flex-1">
-          {/* Product Title */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{post.title}</h1>
-          
-          {/* Rating and Reviews */}
-          <div className="flex items-center mb-4">
-            <span className="bg-yellow-400 text-white font-semibold px-2 py-1 rounded">
-              {post.rating.rate}★
-            </span>
-            <span className="text-gray-600 ml-3">{post.rating.count} reviews</span>
+        <div className="flex flex-col md:flex-row gap-10">
+          {/* Product Image Section */}
+          <div className="flex-1">
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full h-[400px] object-contain rounded-lg  mix-blend-multiply"
+            />
           </div>
 
-          {/* Price Section */}
-          <div className="text-3xl font-bold text-green-600 mb-2">
-            ${post.price}
-          </div>
+          {/* Product Details Section */}
+          <div className="flex-1 flex gap-6 flex-col">
+            {/* Product Title */}
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+              {post.title}
+            </h1>
 
-          {/* Offers and Delivery Information */}
-          <div className="mb-4">
-            <p className="text-gray-500 text-sm">Free delivery by <strong>Tuesday, Sept 7</strong></p>
-            <p className="text-gray-500 text-sm">Get up to 10% off with select cards</p>
-          </div>
+            {/* Price Section */}
+            <div className="text-3xl font-bold text-gray-900 mb-2">
+              ${post.price}{" "}
+              <span className="text-gray-500 text-sm line-through">
+                ${post.price}
+              </span>
+            </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4 mb-6">
-            <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out">
-              Buy Now
-            </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out" onClick={()=>handleAddToCartClick(post)}>
-              Add to Cart
-            </button>
+            {/* Product Description */}
+            <div className="flex gap-2 flex-col">
+              <p className="text-black uppercase text-xl font-semibold">
+                Description
+              </p>
+              <p className="text-gray-800 font-light">{post.description}</p>
+            </div>
+            {/* Buttons */}
+            <div className="flex gap-4 mb-6">
+              <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out">
+                Buy Now
+              </button>
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out"
+                onClick={() => handleAddToCartClick(post)}
+              >
+                Add to Cart
+              </button>
+            </div>
           </div>
-
-          {/* Product Description */}
-          <p className="text-gray-800">{post.description}</p>
         </div>
       </div>
     </div>
-    </div>
-    
   );
 };
 

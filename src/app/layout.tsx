@@ -8,7 +8,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ARM Website",
-  description: "A community-driven club dedicated to exploring and advancing robotics technology through hands-on projects, workshops, and competitions.",
+  description:
+    "A community-driven club dedicated to exploring and advancing robotics technology through hands-on projects, workshops, and competitions.",
 };
 
 export default function RootLayout({
@@ -17,14 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="en">
-      <body className={`bg-zinc-950 text-[#FAFAFA]`}>
-        <Header/>
-        <CartProvider>
-          {children}   
-        </CartProvider>
-      </body>
+    <html lang="en">
+      <CartProvider>
+        <body className={`bg-zinc-950 text-[#FAFAFA]`}>
+          <Header />
+          {children}
+        </body>
+      </CartProvider>
     </html>
-    
   );
 }

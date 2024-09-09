@@ -1,7 +1,9 @@
 'use client'
+import React from 'react';
 import { useCart } from '../Context';
+import Image from 'next/image';
 
-const page = () => {
+const CartPage: React.FC = () => {
   const { cartItems, removeFromCart, updateCartItemQuantity, cartTotal, cartCount } = useCart();
 
   const handleIncreaseQuantity = (productId: number) => {
@@ -20,72 +22,98 @@ const page = () => {
 
   const handleBuy = () => {
     alert("Proceeding to Checkout!");
-
-
   };
 
   return (
-    <div className='bg-white text-black h-screen w-full flex justify-center items-center'>
-<div className="container mx-auto p-4">
-      <h1 className="text-3xl font-semibold mb-6">Your Cart</h1>
+    <div className="bg-white text-black min-h-screen w-full flex flex-col">
+      <div className="container mx-auto p-4 flex-grow mt-20">
+        <h1 className="text-3xl font-semibold mb-6 text-center uppercase">Your Cart</h1>
 
-      {cartItems.length === 0 ? (
-        <p className="text-lg">Your cart is empty.</p>
-      ) : (
-        <div>
-          {cartItems.map((item) => (
-            <div key={item.product.id} className="flex items-center justify-between p-4 border-b">
-              <div className="flex items-center space-x-4">
-                <img src={item.product.image} alt={item.product.title} className="w-16 h-16 object-cover" />
-                <div>
-                  <h2 className="text-lg font-medium">{item.product.title}</h2>
-                  <p>${item.product.price.toFixed(2)}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <button
-                  className="px-2 py-1 bg-gray-200 text-gray-700"
-                  onClick={() => handleDecreaseQuantity(item.product.id)}
-                >
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button
-                  className="px-2 py-1 bg-gray-200 text-gray-700"
-                  onClick={() => handleIncreaseQuantity(item.product.id)}
-                >
-                  +
-                </button>
-              </div>
-              <div>
-                <button
-                  className="px-4 py-2 bg-red-500 text-white"
-                  onClick={() => removeFromCart(item.product.id)}
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          ))}
+        {cartItems.length === 0 ? (
+          <p className="text-lg">Your cart is empty.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-xl border-b">
+                  <th className="p-2 text-center font-medium">Description</th>
+                  <th className="p-2 text-center font-medium">Quantity</th>
+                  <th className="p-2 text-center font-medium">Remove</th>
+                  <th className="p-2 text-center font-medium">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cartItems.map((item) => (
+                  <tr key={item.product.id} className="border-b">
+                    <td className="p-2">
+                      <div className="flex items-center space-x-4">
+                        <div className="size-20 relative">
+                          <img 
+                          src={item.product.image} 
+                          alt={item.product.title}
+                          className='object-contain h-20 w-20'
+                          />
+                        </div>
+                        <div>
+                          <h2 className="font-medium">{item.product.title}</h2>
+                          <p className="text-sm text-gray-500">${item.product.price.toFixed(2)} each</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <div className="flex items-center justify-center space-x-2">
+                        <button
+                          className="px-4 py-3 bg-gray-200 text-gray-700 rounded"
+                          onClick={() => handleDecreaseQuantity(item.product.id)}
+                        >
+                          -
+                        </button>
+                        <span className="w-8 text-center">{item.quantity}</span>
+                        <button
+                          className="px-4 py-3 bg-blue-800 text-gray-200 rounded"
+                          onClick={() => handleIncreaseQuantity(item.product.id)}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td className="p-2 text-center">
+                      <button
+                        className="px-4 py-3 bg-white text-black rounded  transition-colors border font-mono"
+                        onClick={() => removeFromCart(item.product.id)}
+                      >
+                       x
+                      </button>
+                    </td>
+                    <td className="p-3 text-center font-medium ">
+                      ${(item.product.price * item.quantity).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
-          <div className="flex justify-between items-center mt-6">
+      {cartItems.length > 0 && (
+        <div className="bg-gray-100 p-4 mt-6">
+          <div className="container mx-auto flex justify-between items-center flex-wrap">
             <div>
               <h2 className="text-xl font-semibold">Total Items: {cartCount}</h2>
               <h2 className="text-xl font-semibold">Total Price: ${cartTotal.toFixed(2)}</h2>
             </div>
             <button
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+              className="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-950 transition-colors mt-4 sm:mt-0"
               onClick={handleBuy}
             >
-              Buy Now
+              Proceed to Checkout
             </button>
           </div>
         </div>
       )}
     </div>
-    </div>
-    
   );
 };
 
-export default page
+export default CartPage;
