@@ -4,7 +4,7 @@ import {events} from '../../../public/events'
 const page = () => {
   return (
     <main className="p-6 bg-gray-100 min-h-screen">
-    <h1 className="text-3xl font-bold mb-8 text-center text-black">Upcoming and Past Events</h1>
+    <h1 className="text-3xl font-bold mb-8 text-center text-black">Past Events</h1>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {events.map((event) => (
         <Link href={`/events/${event.id}`} key={event.id} className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl">
