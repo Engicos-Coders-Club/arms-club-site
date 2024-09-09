@@ -209,16 +209,14 @@ const page = () => {
     const [password, setPassword] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [error, setError] = useState('');
-    const [isClient, setIsClient] = useState(false); // New state to track if the client is mounted
+    const [isClient, setIsClient] = useState(false); 
   
     // The hardcoded password
     const correctPassword = 'test123';
   
     useEffect(() => {
-      // Set isClient to true when the component mounts on the client side
       setIsClient(true);
   
-      // Check if the user is already authenticated
       const auth = localStorage.getItem('isAuthenticated');
       if (auth === 'true') {
         setIsAuthenticated(true);
@@ -228,17 +226,14 @@ const page = () => {
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       if (password === correctPassword) {
-        // Set authentication state and store in localStorage
         setIsAuthenticated(true);
         localStorage.setItem('isAuthenticated', 'true');
       } else {
-        // Show an error message if the password is incorrect
         setError('Incorrect password, please try again.');
       }
     };
   
     const handleLogout = () => {
-      // Only execute logout if running on the client
       if (isClient) {
         localStorage.removeItem('isAuthenticated');
     }
@@ -246,7 +241,6 @@ const page = () => {
     };
 
     if (!isAuthenticated) {
-        // Show the password form if the user is not authenticated
         return (
           <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md space-y-4">
