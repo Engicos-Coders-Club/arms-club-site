@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { events } from "../../../../public/events";
+import { useRouter } from "next/navigation";
 
 const Page = ({ params }: { params: { events: string } }) => {
+  const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -13,6 +15,9 @@ const Page = ({ params }: { params: { events: string } }) => {
 
   const handleRegisterClick = () => {
     setShowForm(true);
+  };
+  const handleBackClick = () => {
+    router.back();
   };
 
   if (!event) {
@@ -26,6 +31,14 @@ const Page = ({ params }: { params: { events: string } }) => {
   return (
     <main className="p-6 bg-gray-100 min-h-screen flex justify-center items-center">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden max-w-3xl mx-auto">
+      <div className="p-4">
+          <button
+            onClick={handleBackClick}
+            className="text-blue-500 hover:text-blue-700 font-semibold cursor-pointer"
+          >
+            &larr; Back
+          </button>
+        </div>
         <img
           src={event.image}
           alt={event.name}
