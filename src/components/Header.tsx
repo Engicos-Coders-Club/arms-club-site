@@ -1,12 +1,14 @@
 'use client'
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/app/Context";
 const Header = () => {
   const { cartCount } = useCart();
+  const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
     console.log("Cart count updated:",cartCount ); 
+    setIsMounted(true);
   }, [cartCount]);
 
   return (
@@ -37,7 +39,7 @@ const Header = () => {
               <Link href="/cart" className="hover:text-gray-300">
                 Cart
               </Link>
-              {cartCount >= 0 && (
+              {isMounted && cartCount >  0 && (
                 <span className="absolute -top-2 -right-3 bg-red-500 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs">
                   {cartCount}
                 </span>
