@@ -241,7 +241,8 @@ const page = () => {
       // Only execute logout if running on the client
       if (isClient) {
         localStorage.removeItem('isAuthenticated');
-      }
+    }
+    router.push('/')
     };
 
     if (!isAuthenticated) {
