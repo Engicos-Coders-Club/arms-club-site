@@ -4,7 +4,6 @@ const About = () => {
   return (
     <div className="py-16">
       <div className="flex sm:flex-row flex-col sm:justify-between items-center">
-        {/* Image on the left */}
         <div className="sm:w-1/3 w-full flex justify-center sm:justify-start">
           <div className="w-72 h-72 sm:m-12 border border-white flex justify-center items-center rounded-full">
             <Image
@@ -16,7 +15,6 @@ const About = () => {
             />
           </div>
         </div>
-        {/* Text on the right */}
         <div className="sm:w-2/3 w-full">
           <h1 className="font-bold sm:text-4xl text-3xl mb-5 text-center">
             About Us
