@@ -54,6 +54,7 @@ export const createEvent = mutation({
       description: args.description,
       image: args.image,
       isCompleted: args.isCompleted,
+      participants: []
     });
     return true;
   },
@@ -109,6 +110,7 @@ export const update = mutation({
       description: args.description,
       image: args.image,
       isCompleted: args.isCompleted,
+      participants: []
     });
     return true;
   },
@@ -216,3 +218,29 @@ export const attendEvent = mutation({
     return true;
   },
 });
+
+export const unattendEvent = mutation({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    const user = await ctx.db.get(args.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (!event.participants || !event.participants.includes(args.userId)) {
+      throw new Error("User is not attending the event");
+    }
+
+    event.participants = event.participants.filter((id) => id !== args.userId);
+    await ctx.db.replace(args.eventId, event);
+    return true;
+  },
+})

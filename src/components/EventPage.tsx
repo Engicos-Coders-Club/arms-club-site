@@ -19,6 +19,7 @@ const EventPage = ({
   const { isSignedIn, user } = useUser();
   const createUser = useMutation(api.database.createUser);
   const attendEvents = useMutation(api.database.attendEvent);
+  const unAttendEvents = useMutation(api.database.unattendEvent);
   //   console.log(user)
   const [formData, setFormData] = useState({
     name: user?.fullName,
@@ -83,7 +84,7 @@ const EventPage = ({
       }
       setShowForm(false);
     } catch (error) {
-      if (error ) {
+      if (error) {
         console.error("Error attending event", error);
       }
       setShowForm(false);
@@ -120,6 +121,11 @@ const EventPage = ({
             <p className="text-gray-500 text-lg">
               Attendees: {event.attendees}
             </p>
+            {!event.isCompleted && (
+              <p className="text-gray-500 text-lg">
+                Seats Left : {event.attendees - event.participants.length}
+              </p>
+            )}
           </div>
 
           <p className="text-gray-400 text-sm mt-4">
@@ -128,18 +134,28 @@ const EventPage = ({
         </div>
         {!event.isCompleted && (
           <div>
-            <button
-              onClick={() => {
-                if (isSignedIn) {
-                  setShowForm(true);
-                } else {
-                  router.push("/sign-in");
-                }
-              }}
-              className="px-3 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300"
-            >
-              Register
-            </button>
+            {userDetail?._id && event.participants.includes(userDetail._id) ? (
+              <button className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
+              onClick={()=>{
+                unAttendEvents({eventId:event._id,userId:userDetail._id})
+              }}>
+                UnRegister
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (isSignedIn) {
+                    setShowForm(true);
+                  } else {
+                    router.push("/sign-in");
+                  }
+                }}
+                className="px-3 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300"
+              >
+                Register
+              </button>
+            )}
+
             {showForm && isSignedIn && (
               <div>
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -149,7 +165,7 @@ const EventPage = ({
                     </h2>
                     <form
                       className="bg-white shadow-md rounded-lg p-10 max-w-lg mx-auto space-y-6 text-black"
-                      onSubmit={ handleSubmit}
+                      onSubmit={handleSubmit}
                     >
                       <input
                         name="name"
