@@ -139,3 +139,39 @@ export const getSingleProduct = query({
     return task
   },
 });
+
+export const getSingleEvent = query({
+  args: { Id: v.id("events") },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.Id);
+    return event
+  },
+});
+
+export const updateProduct = mutation({
+  args:{
+    storageId: v.id("products"),
+    title: v.string(),
+    price: v.number(),
+    description: v.string(),
+    image: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.replace(args.storageId, {
+      title: args.title,
+      price: args.price,
+      description: args.description,
+      image: args.image,
+    });
+    return true;
+    }
+  })
+
+  export const deleteProductId = mutation({
+    args: {
+      storageId: v.id("products"),
+    },
+    handler: async (ctx, args) => {
+      return await ctx.db.delete(args.storageId);
+    },
+  });
