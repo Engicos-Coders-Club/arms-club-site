@@ -132,7 +132,7 @@ const EventPage = ({
             Date: {new Date(event.date).toDateString()}
           </p>
         </div>
-        {!event.isCompleted && (
+        {!event.isCompleted && (event.attendees - event.participants.length) > 0 && (
           <div>
             {userDetail?._id && event.participants.includes(userDetail._id) ? (
               <button className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
