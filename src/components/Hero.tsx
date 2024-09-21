@@ -1,5 +1,4 @@
 import Spline from "@splinetool/react-spline/next";
-import TextRandomizer from "./TextRandomizer";
 import { Oxanium } from "next/font/google";
 const oxanium = Oxanium({ subsets: ["latin"], weight: ["400", "800"] });
 const Hero = () => {

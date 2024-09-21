@@ -1,36 +1,14 @@
 "use client";
-import { useCart } from "../../Context";
-import { product } from "../../../../public/demoproduct";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
 
-interface Query {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-}
-
-// export const revalidate = 60;
-
-// export async function generateStaticParams() {
-//   return product.map((products) => ({
-//     id: products.id.toString(),
-//   }));
-// }
-
-const Page = ({ params }: { params: { product: string } }) => {
-  const postId = Number(params.product);
-  const post = product.find((post) => post.id === postId);
-  const { addToCart } = useCart();
-
-  const handleAddToCartClick = (product: Query) => {
-    addToCart(product);
-  };
+const Page = ({ params }: { params: { product: Id<"products"> } }) => {
+  const post = useQuery(api.database.getSingleProduct, { Id: params.product });
   if (!post) {
     return (
-      <main>
-        <h1>Product not found</h1>
+      <main className="min-h-screen w-full bg-white">
+       
       </main>
     );
   }
@@ -77,7 +55,7 @@ const Page = ({ params }: { params: { product: string } }) => {
               </button>
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out"
-                onClick={() => handleAddToCartClick(post)}
+                // onClick={() => handleAddToCartClick(post)}
               >
                 Add to Cart
               </button>

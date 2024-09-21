@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { CartProvider } from "./Context";
-
-const inter = Inter({ subsets: ["latin"] });
+import Wrapper from "@/components/Wrapper";
 
 export const metadata: Metadata = {
   title: "ARM Website",
@@ -19,12 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <CartProvider>
-        <body className={`bg-zinc-950 text-[#FAFAFA]`}>
-          <Header />
-          {children}
-        </body>
-      </CartProvider>
+      <body className={`bg-zinc-950 text-[#FAFAFA]`}>
+          <Wrapper>
+            <Header />
+            {children}
+          </Wrapper>
+      </body>
     </html>
   );
 }

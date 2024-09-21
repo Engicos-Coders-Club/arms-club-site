@@ -1,6 +1,8 @@
 "use client";
+import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { api } from "../../../convex/_generated/api";
 
 interface Event {
   id: number;
@@ -16,6 +18,7 @@ const EventAdminPage: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const createEvent = useMutation(api.database.createEvent);
 
   const handleCreate = () => {
     setSelectedEvent(null);
@@ -39,7 +42,7 @@ const EventAdminPage: React.FC = () => {
     }
     setIsDialogOpen(false);
     setEvents([...events, event]);
-
+    // console.log(events)
     //write her the save logic add it to data base
   };
 
@@ -135,6 +138,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
+    console.log(formData)
   };
 
   return (
@@ -147,6 +151,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
         value={formData.name}
         onChange={handleChange}
         placeholder="Event Name"
+        required
         className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <input
@@ -154,6 +159,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
         value={formData.organizer}
         onChange={handleChange}
         placeholder="Organizer"
+        required
         className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <input
@@ -162,6 +168,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
         onChange={handleChange}
         placeholder="Attendees"
         type="number"
+        required
         className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <input
@@ -170,6 +177,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
         onChange={handleChange}
         placeholder="Date"
         type="date"
+        required
         className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <input
@@ -177,6 +185,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
         value={formData.description}
         onChange={handleChange}
         placeholder="Description"
+        required
         className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <input
@@ -184,6 +193,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSave, onCancel }) => {
         value={formData.image}
         onChange={handleChange}
         placeholder="Image URL"
+        required
         className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <div className="flex space-x-4">
