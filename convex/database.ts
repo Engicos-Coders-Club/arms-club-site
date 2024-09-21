@@ -3,19 +3,18 @@ import { mutation, query } from "./_generated/server";
 
 export const createUser = mutation({
   args: {
-    userId: v.string(),
+    userId: v.string(), // necessary
     email: v.string(),
-    firstName: v.string(),
-    lastName: v.string(),
+    name: v.string(),
+    branch: v.optional(v.string()), // optional
+    year: v.optional(v.number()), // optional
+    rollNo: v.optional(v.string()), // optional
+    detailsExist: v.optional(v.boolean()), // optional
   },
   handler: async (ctx, args) => {
     const existingUser = await ctx.db
       .query("users")
-      .filter(
-        (q) =>
-          q.eq(q.field("userId"), args.userId) ||
-          q.eq(q.field("email"), args.email)
-      )
+      .filter((q) => q.eq(q.field("email"), args.email))
       .first();
 
     if (existingUser) {
@@ -25,9 +24,11 @@ export const createUser = mutation({
     await ctx.db.insert("users", {
       userId: args.userId,
       email: args.email,
-      firstName: args.firstName,
-      lastName: args.lastName,
-      detailsExist: false,
+      name: args.name,
+      branch: args.branch,
+      year: args.year,
+      rollNo: args.rollNo,
+      detailsExist: args.detailsExist || false,
     });
 
     return true;
@@ -131,12 +132,11 @@ export const createProduct = mutation({
   },
 });
 
-
 export const getSingleProduct = query({
   args: { Id: v.id("products") },
   handler: async (ctx, args) => {
     const task = await ctx.db.get(args.Id);
-    return task
+    return task;
   },
 });
 
@@ -144,12 +144,23 @@ export const getSingleEvent = query({
   args: { Id: v.id("events") },
   handler: async (ctx, args) => {
     const event = await ctx.db.get(args.Id);
-    return event
+    return event;
+  },
+});
+
+export const getSingleUSer = query({
+  args: { Id: v.string() },
+  handler: async (ctx, args) => {
+    const existingUser = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("userId"), args.Id))
+      .first();
+    return existingUser;
   },
 });
 
 export const updateProduct = mutation({
-  args:{
+  args: {
     storageId: v.id("products"),
     title: v.string(),
     price: v.number(),
@@ -164,14 +175,44 @@ export const updateProduct = mutation({
       image: args.image,
     });
     return true;
-    }
-  })
+  },
+});
 
-  export const deleteProductId = mutation({
-    args: {
-      storageId: v.id("products"),
-    },
-    handler: async (ctx, args) => {
-      return await ctx.db.delete(args.storageId);
-    },
-  });
+export const deleteProductId = mutation({
+  args: {
+    storageId: v.id("products"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.delete(args.storageId);
+  },
+});
+
+export const attendEvent = mutation({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    const user = await ctx.db.get(args.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (!event.participants) {
+      event.participants = [];
+    }
+
+    if (event.participants.includes(args.userId)) {
+      throw new Error("User already attending the event");
+    }
+
+    event.participants.push(args.userId);
+    await ctx.db.replace(args.eventId, event);
+    return true;
+  },
+});

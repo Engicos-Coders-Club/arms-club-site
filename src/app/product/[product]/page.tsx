@@ -2,8 +2,10 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
 const Page = ({ params }: { params: { product: Id<"products"> } }) => {
+  const router = useRouter();
   const post = useQuery(api.database.getSingleProduct, { Id: params.product });
   if (!post) {
     return (
@@ -12,10 +14,20 @@ const Page = ({ params }: { params: { product: Id<"products"> } }) => {
       </main>
     );
   }
+  const handleBackClick = () => {
+    router.back();
+  };
 
   return (
     <div className="w-full bg-[#FAFAFA] h-screen flex justify-center items-center">
       <div className="container mx-auto px-4 py-8">
+      <button
+        onClick={handleBackClick}
+         className="text-blue-500 hover:text-blue-700 font-semibold cursor-pointer "
+      >
+        &larr; Back
+      </button>
+
         <div className="flex flex-col md:flex-row gap-10">
           {/* Product Image Section */}
           <div className="flex-1">
