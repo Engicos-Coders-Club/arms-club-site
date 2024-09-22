@@ -1,43 +1,33 @@
 "use client";
-import { useCart } from "../../Context";
-import { product } from "../../../../public/demoproduct";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
-interface Query {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-}
-
-// export const revalidate = 60;
-
-// export async function generateStaticParams() {
-//   return product.map((products) => ({
-//     id: products.id.toString(),
-//   }));
-// }
-
-const Page = ({ params }: { params: { product: string } }) => {
-  const postId = Number(params.product);
-  const post = product.find((post) => post.id === postId);
-  const { addToCart } = useCart();
-
-  const handleAddToCartClick = (product: Query) => {
-    addToCart(product);
-  };
+const Page = ({ params }: { params: { product: Id<"products"> } }) => {
+  const router = useRouter();
+  const post = useQuery(api.database.getSingleProduct, { Id: params.product });
   if (!post) {
     return (
-      <main>
-        <h1>Product not found</h1>
+      <main className="min-h-screen w-full bg-white">
+       
       </main>
     );
   }
+  const handleBackClick = () => {
+    router.back();
+  };
 
   return (
     <div className="w-full bg-[#FAFAFA] h-screen flex justify-center items-center">
       <div className="container mx-auto px-4 py-8">
+      <button
+        onClick={handleBackClick}
+         className="text-blue-500 hover:text-blue-700 font-semibold cursor-pointer "
+      >
+        &larr; Back
+      </button>
+
         <div className="flex flex-col md:flex-row gap-10">
           {/* Product Image Section */}
           <div className="flex-1">
@@ -77,7 +67,7 @@ const Page = ({ params }: { params: { product: string } }) => {
               </button>
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out"
-                onClick={() => handleAddToCartClick(post)}
+                // onClick={() => handleAddToCartClick(post)}
               >
                 Add to Cart
               </button>

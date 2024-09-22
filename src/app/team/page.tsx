@@ -6,9 +6,9 @@ import { FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa6";
 
 const TeamPage = () => {
   return (
-    <div className="min-h-screen dark:bg-[#0B1215] py-10">
+    <div className="min-h-screen bg-[#FAFAFA] py-10">
       <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-12 text-black dark:text-white">Meet the Team</h1>
+        <h1 className="text-4xl font-bold text-center mb-12 text-black ">Meet the Team</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {clubMembers.map((member) => (
             <div key={member.id} className="relative">
@@ -25,7 +25,7 @@ const TeamPage = () => {
                     />
                   </div>
                 </div>
-                <h2 className="text-xl font-semibold text-black dark:text-white">{member.name}</h2>
+                <h2 className="text-xl font-semibold text-black ">{member.name}</h2>
                 <p className="text-gray-500">{member.position}</p>
                 <p className="text-gray-700">
                   {member.year} Year, {member.branch}
