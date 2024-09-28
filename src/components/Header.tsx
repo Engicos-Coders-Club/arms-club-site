@@ -5,13 +5,13 @@ const Header = () => {
   const {  userId  } = auth()
   return (
     <div className="bg-transparent text-white mix-blend-difference fixed top-0 left-0 right-0 z-[99999]">
-      <div className="container mx-auto py-4 px-6 flex items-center justify-between">
-        <Link href={"/"} className="text-xl flex text-center flex-col">
-          <span className="sm:text-2xl text-lg font-semibold">ARMS</span>
+      <div className="container flex items-center justify-between px-6 py-4 mx-auto">
+        <Link href={"/"} className="flex flex-col text-xl text-center">
+          <span className="text-lg font-semibold sm:text-2xl">ARMS</span>
           <span className="sm:text-2xl text-[0.6rem]">ROBOTICS CLUB</span>
         </Link>
         <nav>
-          <ul className="flex sm:space-x-10 space-x-6 sm:text-xl text-sm uppercase">
+          <ul className="flex space-x-6 text-sm uppercase sm:space-x-10 sm:text-xl">
             <li>
               <Link href="/product" className="hover:text-gray-300">
                 Product
@@ -39,7 +39,7 @@ const Header = () => {
               )}
 
               {/* {isMounted && cartCount > 0 && (
-                <span className="absolute -top-2 -right-3 bg-red-500 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-black bg-red-500 rounded-full -top-2 -right-3">
                   {cartCount}
                 </span>
               )} */}
