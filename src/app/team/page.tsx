@@ -7,9 +7,9 @@ import { FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa6";
 const TeamPage = () => {
   return (
     <div className="min-h-screen bg-[#FAFAFA] py-10">
-      <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-12 text-black ">Meet the Team</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="px-4 mx-auto max-w-7xl">
+        <h1 className="mb-12 text-4xl font-bold text-center text-black ">Meet the Team</h1>
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {clubMembers.map((member) => (
             <div key={member.id} className="relative">
               {/* Content Div (Text & Image) */}
@@ -21,7 +21,7 @@ const TeamPage = () => {
                       alt={member.name}
                       width={150}
                       height={150}
-                      className="rounded-full mx-auto"
+                      className="mx-auto rounded-full"
                     />
                   </div>
                 </div>
@@ -30,7 +30,7 @@ const TeamPage = () => {
                 <p className="text-gray-700">
                   {member.year} Year, {member.branch}
                 </p>
-                <div className="mt-4 flex justify-center space-x-4">
+                <div className="flex justify-center mt-4 space-x-4">
                   <a
                     href={member.linkedin}
                     target="_blank"

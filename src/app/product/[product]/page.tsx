@@ -9,7 +9,7 @@ const Page = ({ params }: { params: { product: Id<"products"> } }) => {
   const post = useQuery(api.database.getSingleProduct, { Id: params.product });
   if (!post) {
     return (
-      <main className="min-h-screen w-full bg-white">
+      <main className="w-full min-h-screen bg-white">
        
       </main>
     );
@@ -20,15 +20,15 @@ const Page = ({ params }: { params: { product: Id<"products"> } }) => {
 
   return (
     <div className="w-full bg-[#FAFAFA] h-screen flex justify-center items-center">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container px-4 py-8 mx-auto">
       <button
         onClick={handleBackClick}
-         className="text-blue-500 hover:text-blue-700 font-semibold cursor-pointer "
+         className="font-semibold text-blue-500 cursor-pointer hover:text-blue-700 "
       >
         &larr; Back
       </button>
 
-        <div className="flex flex-col md:flex-row gap-10">
+        <div className="flex flex-col gap-10 md:flex-row">
           {/* Product Image Section */}
           <div className="flex-1">
             <img
@@ -39,34 +39,34 @@ const Page = ({ params }: { params: { product: Id<"products"> } }) => {
           </div>
 
           {/* Product Details Section */}
-          <div className="flex-1 flex gap-6 flex-col">
+          <div className="flex flex-col flex-1 gap-6">
             {/* Product Title */}
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            <h1 className="mb-4 text-2xl font-bold text-gray-900">
               {post.title}
             </h1>
 
             {/* Price Section */}
-            <div className="text-3xl font-bold text-gray-900 mb-2">
+            <div className="mb-2 text-3xl font-bold text-gray-900">
               ${post.price}{" "}
-              <span className="text-gray-500 text-sm line-through">
+              <span className="text-sm text-gray-500 line-through">
                 ${post.price}
               </span>
             </div>
 
             {/* Product Description */}
-            <div className="flex gap-2 flex-col">
-              <p className="text-black uppercase text-xl font-semibold">
+            <div className="flex flex-col gap-2">
+              <p className="text-xl font-semibold text-black uppercase">
                 Description
               </p>
-              <p className="text-gray-800 font-light">{post.description}</p>
+              <p className="font-light text-gray-800">{post.description}</p>
             </div>
             {/* Buttons */}
             <div className="flex gap-4 mb-6">
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out">
+              <button className="px-6 py-2 font-bold text-white transition duration-300 ease-in-out bg-yellow-500 rounded-lg shadow-md hover:bg-yellow-600">
                 Buy Now
               </button>
               <button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out"
+                className="px-6 py-2 font-bold text-white transition duration-300 ease-in-out bg-blue-600 rounded-lg shadow-md hover:bg-blue-700"
                 // onClick={() => handleAddToCartClick(post)}
               >
                 Add to Cart

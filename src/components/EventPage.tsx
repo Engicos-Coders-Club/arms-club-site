@@ -60,7 +60,7 @@ const EventPage = ({
 
   if (!event) {
     return (
-      <main className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">
+      <main className="flex items-center justify-center min-h-screen p-6 bg-gray-100">
         <h1 className="text-3xl font-bold">Event not found</h1>
       </main>
     );
@@ -92,12 +92,12 @@ const EventPage = ({
   };
 
   return (
-    <main className="p-6 bg-gray-100 min-h-screen flex justify-center items-center">
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden max-w-3xl mx-auto min-w-96 p-6">
+    <main className="flex items-center justify-center min-h-screen p-6 bg-gray-100">
+      <div className="max-w-3xl p-6 mx-auto overflow-hidden bg-white rounded-lg shadow-lg min-w-96">
         <div className="p-4">
           <button
             onClick={handleBackClick}
-            className="text-blue-500 hover:text-blue-700 font-semibold cursor-pointer"
+            className="font-semibold text-blue-500 cursor-pointer hover:text-blue-700"
           >
             &larr; Back
           </button>
@@ -109,33 +109,33 @@ const EventPage = ({
               : "https://makebot.in/images/news/Events-1.png"
           }
           alt={event.name}
-          className="w-full h-60 object-cover"
+          className="object-cover w-full h-60"
         />
         <div className="p-6">
-          <h1 className="text-4xl font-bold mb-4 text-black">{event.name}</h1>
-          <p className="text-gray-600 mb-4">{event.description}</p>
+          <h1 className="mb-4 text-4xl font-bold text-black">{event.name}</h1>
+          <p className="mb-4 text-gray-600">{event.description}</p>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-gray-500 text-lg">
+            <p className="text-lg text-gray-500">
               Organiser: {event.organiser}
             </p>
-            <p className="text-gray-500 text-lg">
+            <p className="text-lg text-gray-500">
               Attendees: {event.attendees}
             </p>
             {!event.isCompleted && (
-              <p className="text-gray-500 text-lg">
+              <p className="text-lg text-gray-500">
                 Seats Left : {event.attendees - event.participants.length}
               </p>
             )}
           </div>
 
-          <p className="text-gray-400 text-sm mt-4">
+          <p className="mt-4 text-sm text-gray-400">
             Date: {new Date(event.date).toDateString()}
           </p>
         </div>
         {!event.isCompleted && (event.attendees - event.participants.length) > 0 && (
           <div>
             {userDetail?._id && event.participants.includes(userDetail._id) ? (
-              <button className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
+              <button className="px-3 py-2 text-white transition duration-300 bg-green-500 rounded-md hover:bg-green-600"
               onClick={()=>{
                 unAttendEvents({eventId:event._id,userId:userDetail._id})
               }}>
@@ -150,7 +150,7 @@ const EventPage = ({
                     router.push("/sign-in");
                   }
                 }}
-                className="px-3 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-300"
+                className="px-3 py-2 text-white transition duration-300 bg-yellow-500 rounded-md hover:bg-yellow-600"
               >
                 Register
               </button>
@@ -158,13 +158,13 @@ const EventPage = ({
 
             {showForm && isSignedIn && (
               <div>
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                  <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-                    <h2 className="text-2xl font-semibold mb-4 text-black">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
+                    <h2 className="mb-4 text-2xl font-semibold text-black">
                       Register for the Event
                     </h2>
                     <form
-                      className="bg-white shadow-md rounded-lg p-10 max-w-lg mx-auto space-y-6 text-black"
+                      className="max-w-lg p-10 mx-auto space-y-6 text-black bg-white rounded-lg shadow-md"
                       onSubmit={handleSubmit}
                     >
                       <input
@@ -173,7 +173,7 @@ const EventPage = ({
                         placeholder="Name"
                         value={formData?.name || ""}
                         required
-                        className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <input
                         name="email"
@@ -181,7 +181,7 @@ const EventPage = ({
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full border text-gray-500 border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <select
                         name="branch"
@@ -190,7 +190,7 @@ const EventPage = ({
                           setFormData({ ...formData, branch: e.target.value })
                         }
                         required
-                        className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="" disabled>
                           Select Branch
@@ -212,7 +212,7 @@ const EventPage = ({
                           })
                         }
                         required
-                        className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="" disabled>
                           Select Year
@@ -228,17 +228,17 @@ const EventPage = ({
                         value={formData.rollNumber}
                         onChange={handleChange}
                         required
-                        className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <div className="flex space-x-4">
                         <button
                           type="submit"
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="px-4 py-2 text-white bg-blue-600 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           Register
                         </button>
                         <button
-                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                          className="px-4 py-2 text-gray-700 bg-gray-300 rounded-md shadow hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
                           onClick={() => setShowForm(false)}
                         >
                           Close
