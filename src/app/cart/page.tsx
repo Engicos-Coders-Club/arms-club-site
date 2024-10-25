@@ -1,18 +1,19 @@
 'use client'
 import React from 'react';
 import { useCart } from '../Context';
+import { Id } from '../../../convex/_generated/dataModel';
 
 const CartPage: React.FC = () => {
   const { cartItems, removeFromCart, updateCartItemQuantity, cartTotal, cartCount } = useCart();
 
-  const handleIncreaseQuantity = (productId: number) => {
+  const handleIncreaseQuantity = (productId:Id<"products">) => {
     const product = cartItems.find((item) => item.product.id === productId);
     if (product) {
       updateCartItemQuantity(productId, product.quantity + 1);
     }
   };
 
-  const handleDecreaseQuantity = (productId: number) => {
+  const handleDecreaseQuantity = (productId:Id<"products">) => {
     const product = cartItems.find((item) => item.product.id === productId);
     if (product && product.quantity > 1) {
       updateCartItemQuantity(productId, product.quantity - 1);

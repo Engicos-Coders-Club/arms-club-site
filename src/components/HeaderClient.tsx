@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
+import { useCart } from "@/app/Context";
 
 interface NavLink {
   href: string;
@@ -15,12 +16,19 @@ interface HeaderClientProps {
 }
 
 const HeaderClient = ({ navLinks }: HeaderClientProps) => {
+    const no_of_items = useCart().cartCount
+  const [cartCount, setCartCount] = useState(no_of_items);
   const pathname = usePathname();
   const menuRef = useRef(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Memoize the header classes to prevent unnecessary recalculations
+  
+  useEffect(()=>{
+      setCartCount(no_of_items)
+    },[no_of_items])
+    
+    // Memoize the header classes to prevent unnecessary recalculations
   const headerClasses = useMemo(() => {
     const isHome = pathname === "/";
     const baseClasses =
@@ -117,8 +125,13 @@ const HeaderClient = ({ navLinks }: HeaderClientProps) => {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className={`hover:text-blue-500 transition-colors py-2 ${getLinkClasses}`}
+                    className={`hover:text-blue-500 transition-colors py-2 ${getLinkClasses} relative`}
                   >
+                    {link.label === 'Cart' && (
+                      <div className="absolute top-0 -right-1 inline-flex items-center justify-center size-5 aspect-square text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-blue-600 rounded-full re">
+                        {cartCount}
+                      </div>
+                    )}
                     {link.label}
                   </Link>
                 </li>
