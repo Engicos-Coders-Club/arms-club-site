@@ -10,6 +10,7 @@ export default defineSchema({
     isCompleted: v.boolean(),
     description: v.string(),
     image: v.string(),
+    payment: v.optional(v.string()),
     date: v.string(),
     participants: v.array(v.id("users")),
   }),

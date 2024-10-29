@@ -119,7 +119,7 @@ const EventPage = ({
               Organiser: {event.organiser}
             </p>
             <p className="text-lg text-gray-500">
-              Attendees: {event.attendees}
+              Attendees: {event.participants.length}
             </p>
             {!event.isCompleted && (
               <p className="text-lg text-gray-500">

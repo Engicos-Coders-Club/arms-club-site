@@ -43,6 +43,7 @@ export const createEvent = mutation({
     isCompleted: v.boolean(),
     description: v.string(),
     image: v.string(),
+    payment: v.string(),
     date: v.string(),
   },
   handler: async (ctx, args) => {
@@ -53,6 +54,7 @@ export const createEvent = mutation({
       date: args.date,
       description: args.description,
       image: args.image,
+      payment: args.payment,
       isCompleted: args.isCompleted,
       participants: []
     });
@@ -64,6 +66,15 @@ export const getPass = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.db.query("admins").take(10);
+  },
+});
+
+export const getUserById = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx) => {
+    return await ctx.db.query("users").collect();
   },
 });
 
@@ -99,6 +110,7 @@ export const update = mutation({
     isCompleted: v.boolean(),
     description: v.string(),
     image: v.string(),
+    payment: v.string(),
     date: v.string(),
   },
   handler: async (ctx, args) => {
@@ -109,6 +121,7 @@ export const update = mutation({
       date: args.date,
       description: args.description,
       image: args.image,
+      payment: args.payment,
       isCompleted: args.isCompleted,
       participants: []
     });
@@ -205,16 +218,28 @@ export const attendEvent = mutation({
       throw new Error("User not found");
     }
 
-    if (!event.participants) {
-      event.participants = [];
-    }
+    // Initialize participants array if it doesn't exist
+    const participants = event.participants || [];
 
-    if (event.participants.includes(args.userId)) {
+    // Check if user is already registered
+    if (participants.includes(args.userId)) {
       throw new Error("User already attending the event");
     }
 
-    event.participants.push(args.userId);
-    await ctx.db.replace(args.eventId, event);
+    // Check if event is full
+    if (participants.length >= event.attendees) {
+      throw new Error("Event is full");
+    }
+
+    // Add user to participants
+    const updatedParticipants = [...participants, args.userId];
+
+    // Update event with new participants array
+    await ctx.db.replace(args.eventId, {
+      ...event,
+      participants: updatedParticipants
+    });
+
     return true;
   },
 });
@@ -235,12 +260,23 @@ export const unattendEvent = mutation({
       throw new Error("User not found");
     }
 
-    if (!event.participants || !event.participants.includes(args.userId)) {
+    // Initialize participants array if it doesn't exist
+    const participants = event.participants || [];
+
+    // Check if user is actually attending
+    if (!participants.includes(args.userId)) {
       throw new Error("User is not attending the event");
     }
 
-    event.participants = event.participants.filter((id) => id !== args.userId);
-    await ctx.db.replace(args.eventId, event);
+    // Remove user from participants
+    const updatedParticipants = participants.filter(id => id !== args.userId);
+
+    // Update event with new participants array
+    await ctx.db.replace(args.eventId, {
+      ...event,
+      participants: updatedParticipants
+    });
+
     return true;
   },
-})
+});
