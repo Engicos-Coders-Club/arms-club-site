@@ -41,11 +41,11 @@ const Page = ({ params }: { params: { product: Id<"products"> } }) => {
   };
 
   return (
-    <div className="w-full bg-[#FAFAFA] h-screen flex justify-center items-center">
+    <div className="w-full bg-[#FAFAFA] h-[120vh] flex justify-center items-center">
       <div className="container px-4 py-8 mx-auto">
         <button
           onClick={handleBackClick}
-          className="font-semibold text-blue-500 cursor-pointer hover:text-blue-700 "
+          className="font-semibold text-blue-500 cursor-pointer hover:text-blue-700 mt-10"
         >
           &larr; Back
         </button>

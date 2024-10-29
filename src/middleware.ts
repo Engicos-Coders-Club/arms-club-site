@@ -9,7 +9,7 @@ const isPublicRoute = createRouteMatcher([
 
 export default clerkMiddleware((auth, req) => {
   const { userId } = auth();
-  console.log("hello from middleware", userId);
+  // console.log("hello from middleware", userId);
 
   // If user is not authenticated and it's not a public route, redirect to sign-in
   if (!userId && !isPublicRoute(req)) {

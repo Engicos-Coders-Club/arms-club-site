@@ -7,9 +7,10 @@ import {
   useMemo,
   useEffect,
 } from "react";
+import { Id } from "../../convex/_generated/dataModel";
 
 type Product = {
-  id: number;
+  id: Id<"products">;
   title: string;
   price: number;
   description: string;
@@ -25,8 +26,8 @@ type CartItem = {
 interface CartContextValue {
   cartItems: CartItem[];
   addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: number) => void;
-  updateCartItemQuantity: (productId: number, quantity: number) => void;
+  removeFromCart: (productId: Id<"products">) => void;
+  updateCartItemQuantity: (productId: Id<"products">, quantity: number) => void;
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;
@@ -75,14 +76,14 @@ export const CartProvider: React.FC<Props> = ({ children }) => {
     });
   }, []);
 
-  const removeFromCart = useCallback((productId: number) => {
+  const removeFromCart = useCallback((productId: Id<"products">) => {
     setCartItems((prevItems) =>
       prevItems.filter((item) => item.product.id !== productId)
     );
   }, []);
 
   const updateCartItemQuantity = useCallback(
-    (productId: number, quantity: number) => {
+    (productId: Id<"products">, quantity: number) => {
       setCartItems((prevItems) =>
         prevItems
           .map((item) =>
