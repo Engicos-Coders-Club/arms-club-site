@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Id } from "../../convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { UploadButton } from "@uploadthing/react";
 
 export const ClientComponent = ({ userId }: { userId: string }) => {
   const [isAuthenticated, setisAuthenticated] = useState(false);
@@ -19,8 +20,11 @@ export const ClientComponent = ({ userId }: { userId: string }) => {
   }, [userId, passwordFromDatabase]);
   if (!isAuthenticated)
     return (
-      <div className="flex items-center justify-center min-h-screen text-6xl text-black bg-gray-100">
-        <h1>YOU ARE NOT MEANT TO BE HERE :)</h1>
+      // <div className="flex items-center justify-center min-h-screen text-6xl text-black bg-gray-100">
+      //   <h1>YOU ARE NOT MEANT TO BE HERE :)</h1>
+      // </div>
+      <div className="w-full min-h-screen p-20 bg-white">
+        <Events />
       </div>
     );
   else {
@@ -40,7 +44,9 @@ type Event = {
   date: string;
   description: string;
   image: string;
+  payment: string;
   isCompleted: boolean;
+  participants: string[];
 };
 
 type Product = {
@@ -68,11 +74,14 @@ export const Events = () => {
     date: "",
     description: "",
     image: "",
+    payment: "",
+    participants: [],
     isCompleted: false,
     ...events,
   });
 
   const [selectedEvent, setSelectedEvent] = useState<{
+    participants: [];
     _id: Id<"events">;
     name: string;
     organiser: string;
@@ -99,6 +108,10 @@ export const Events = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [attendies, setAttendies] = useState(false);
+  const [partiArr, setPartiArr] = useState<
+    { _id: Id<"users">; _creationTime: number; branch?: string; year?: number; rollNo?: string; name: string; userId: string; email: string; }[] | undefined
+  >([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -116,6 +129,7 @@ export const Events = () => {
     date: string;
     description: string;
     image: string;
+    payment: string;
     isCompleted: boolean;
   }) => {
     setSelectedEvent(event);
@@ -127,9 +141,44 @@ export const Events = () => {
       date: event.date,
       description: event.description,
       image: event.image,
+      payment: event.payment,
+      participants: [],
       isCompleted: event.isCompleted,
     });
     setIsDialogOpen(true);
+  };
+
+  const handleAttendies = async (event: {
+    _id: Id<"events">;
+    name: string;
+    organiser: string;
+    attendees: number;
+    date: string;
+    description: string;
+    image: string;
+    payment: string;
+    participants: string[];
+    isCompleted: boolean;
+  }) => {
+    setSelectedEvent(event);
+    setFormData({
+      _id: event._id,
+      name: event.name,
+      organizer: event.organiser,
+      attendees: event.attendees,
+      date: event.date,
+      description: event.description,
+      image: event.image,
+      payment: event.payment,
+      participants: [],
+      isCompleted: event.isCompleted,
+    });
+    const participantsData = await Promise.all(
+      event.participants.map((id) =>
+        useQuery(api.database.getUserById, { userId: id })
+      )
+    ).then((data) => setPartiArr(data));
+    setAttendies(true);
   };
 
   const update = async (storageId: Id<"events">) => {
@@ -192,17 +241,25 @@ export const Events = () => {
               <strong>Organizer:</strong> {event.organiser}
             </p>
             <p className="text-gray-700">
-              <strong>Attendees:</strong> {event.attendees}
+              <strong>Attendees:</strong> {event.participants.length}
             </p>
             <p className="text-gray-700">
               <strong>Date:</strong> {event.date}
             </p>
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-evenly mt-6">
               <button
                 className="px-3 py-2 text-white transition duration-300 bg-yellow-500 rounded-md hover:bg-yellow-600"
-                onClick={() => handleEdit(event)}
+                onClick={() =>
+                  handleEdit({ ...event, payment: event.payment || "" })
+                }
               >
                 Edit
+              </button>
+              <button
+                className="px-3 py-2 text-white transition duration-300 bg-yellow-500 rounded-md hover:bg-yellow-600"
+                onClick={() => handleAttendies(event)}
+              >
+                Attendies
               </button>
               <button
                 className="px-3 py-2 text-white transition duration-300 bg-red-500 rounded-md hover:bg-red-600"
@@ -214,6 +271,25 @@ export const Events = () => {
           </div>
         ))}
       </div>
+      {attendies && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
+            <h2 className="mb-4 text-2xl font-semibold text-black">Attendees</h2>
+            <div className="flex flex-col space-y-4 h-[60vh] overflow-y-scroll">
+              {partiArr.length > 0 ? (
+                partiArr.map((participant) => (
+                  <div key={participant._id} className="p-2 bg-gray-100 rounded-md">
+                    {participant.name || "Loading..."}
+                  </div>
+                ))
+              ) : (
+                <div className="text-gray-500">No attendees yet.</div>
+              )}
+            </div>
+            <button onClick={() => setAttendies(false)} className="text-black bg-gray-300 w-40 h-10 rounded">Close</button>
+          </div>
+        </div>
+      )}
       {isDialogOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
@@ -227,6 +303,7 @@ export const Events = () => {
                     name: formData.name,
                     description: formData.description,
                     image: formData.image,
+                    payment: formData.payment,
                     date: formData.date,
                     attendees: formData.attendees,
                     isCompleted: formData.isCompleted,
@@ -242,6 +319,7 @@ export const Events = () => {
                     date: "",
                     description: "",
                     image: "",
+                    payment: "",
                     isCompleted: false,
                   });
                 } else {
@@ -249,6 +327,7 @@ export const Events = () => {
                     name: formData.name,
                     description: formData.description,
                     image: formData.image,
+                    payment: formData.payment,
                     date: formData.date,
                     attendees: formData.attendees,
                     isCompleted: formData.isCompleted,
@@ -309,6 +388,24 @@ export const Events = () => {
                 required
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <div className="w-full">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Add QR Code
+                </label>
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res: { url: any }[]) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      payment: res[res.length - 1].url,
+                    }));
+                    alert("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    alert(`ERROR while uploading! ${error.message}`);
+                  }}
+                />
+              </div>
               <input
                 name="isCompleted"
                 type="checkbox"
@@ -342,6 +439,7 @@ export const Events = () => {
                       date: "",
                       description: "",
                       image: "",
+                      payment: "",
                       isCompleted: false,
                     });
                   }}
