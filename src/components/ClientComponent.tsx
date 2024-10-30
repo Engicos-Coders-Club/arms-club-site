@@ -20,11 +20,8 @@ export const ClientComponent = ({ userId }: { userId: string }) => {
   }, [userId, passwordFromDatabase]);
   if (!isAuthenticated)
     return (
-      // <div className="flex items-center justify-center min-h-screen text-6xl text-black bg-gray-100">
-      //   <h1>YOU ARE NOT MEANT TO BE HERE :)</h1>
-      // </div>
-      <div className="w-full min-h-screen p-20 bg-white">
-        <Events />
+      <div className="flex items-center justify-center min-h-screen text-6xl text-black bg-gray-100">
+        <h1>YOU ARE NOT MEANT TO BE HERE :)</h1>
       </div>
     );
   else {
@@ -106,6 +103,7 @@ export const Events = () => {
     image: string;
   } | null>(null);
 
+  const [selectedEventParticipants, setSelectedEventParticipants] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [attendies, setAttendies] = useState(false);
@@ -130,6 +128,7 @@ export const Events = () => {
     description: string;
     image: string;
     payment: string;
+    participants: [];
     isCompleted: boolean;
   }) => {
     setSelectedEvent(event);
@@ -148,7 +147,12 @@ export const Events = () => {
     setIsDialogOpen(true);
   };
 
-  const handleAttendies = async (event: {
+  const participantsData = useQuery(
+    api.database.getMultipleUsers,
+    selectedEventParticipants.length > 0 ? { userIds: selectedEventParticipants } : "skip"
+  );
+
+  const handleAttendies = (event: {
     _id: Id<"events">;
     name: string;
     organiser: string;
@@ -160,24 +164,13 @@ export const Events = () => {
     participants: string[];
     isCompleted: boolean;
   }) => {
+    console.log("Event:", event);
     setSelectedEvent(event);
-    setFormData({
-      _id: event._id,
-      name: event.name,
-      organizer: event.organiser,
-      attendees: event.attendees,
-      date: event.date,
-      description: event.description,
-      image: event.image,
-      payment: event.payment,
-      participants: [],
-      isCompleted: event.isCompleted,
-    });
-    const participantsData = await Promise.all(
-      event.participants.map((id) =>
-        useQuery(api.database.getUserById, { userId: id })
-      )
-    ).then((data) => setPartiArr(data));
+    setSelectedEventParticipants(event.participants || []);
+    const participantsData = useQuery(
+      api.database.getMultipleUsers,
+      selectedEventParticipants.length > 0 ? { userIds: selectedEventParticipants } : "skip"
+    );
     setAttendies(true);
   };
 
@@ -250,14 +243,14 @@ export const Events = () => {
               <button
                 className="px-3 py-2 text-white transition duration-300 bg-yellow-500 rounded-md hover:bg-yellow-600"
                 onClick={() =>
-                  handleEdit({ ...event, payment: event.payment || "" })
+                  handleEdit({ ...event, payment: event.payment || "", participants: event.participants || [] })
                 }
               >
                 Edit
               </button>
               <button
                 className="px-3 py-2 text-white transition duration-300 bg-yellow-500 rounded-md hover:bg-yellow-600"
-                onClick={() => handleAttendies(event)}
+                onClick={() => handleAttendies({ ...event, payment: event.payment || "", participants: event.participants || [] })}
               >
                 Attendies
               </button>
@@ -276,17 +269,43 @@ export const Events = () => {
           <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
             <h2 className="mb-4 text-2xl font-semibold text-black">Attendees</h2>
             <div className="flex flex-col space-y-4 h-[60vh] overflow-y-scroll">
-              {partiArr.length > 0 ? (
-                partiArr.map((participant) => (
-                  <div key={participant._id} className="p-2 bg-gray-100 rounded-md">
-                    {participant.name || "Loading..."}
+              {participantsData && participantsData.length > 0 ? (
+                participantsData.map((participant) => (
+                  <div
+                    key={participant.userId}
+                    className="p-4 bg-gray-100 rounded-md shadow"
+                  >
+                    <p className="font-medium">{participant.name}</p>
+                    <p className="text-sm text-gray-600">{participant.email}</p>
+                    {participant.branch && (
+                      <p className="text-sm text-gray-600">
+                        Branch: {participant.branch}
+                      </p>
+                    )}
+                    {participant.year && (
+                      <p className="text-sm text-gray-600">
+                        Year: {participant.year}
+                      </p>
+                    )}
                   </div>
                 ))
               ) : (
-                <div className="text-gray-500">No attendees yet.</div>
+                <div className="p-4 text-center text-gray-500">
+                  No attendees yet.
+                </div>
               )}
             </div>
-            <button onClick={() => setAttendies(false)} className="text-black bg-gray-300 w-40 h-10 rounded">Close</button>
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => {
+                  setAttendies(false);
+                  setSelectedEventParticipants([]);
+                }}
+                className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

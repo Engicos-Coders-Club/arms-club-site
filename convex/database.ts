@@ -78,6 +78,21 @@ export const getUserById = query({
   },
 });
 
+export const getMultipleUsers = query({
+  args: { userIds: v.array(v.string()) },
+  handler: async (ctx, args) => {
+    const users = await Promise.all(
+      args.userIds.map(userId => 
+        ctx.db
+          .query("users")
+          .filter(q => q.eq(q.field("userId"), userId))
+          .first()
+      )
+    );
+    return users.filter(user => user !== null);
+  },
+});
+
 export const getEvent = query({
   args: {},
   handler: async (ctx) => {
