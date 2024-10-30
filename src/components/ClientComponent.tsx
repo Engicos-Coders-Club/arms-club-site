@@ -147,30 +147,17 @@ export const Events = () => {
     setIsDialogOpen(true);
   };
 
-  const participantsData = useQuery(
+const fetchParticipantsData = () => {
+  return useQuery(
     api.database.getMultipleUsers,
     selectedEventParticipants.length > 0 ? { userIds: selectedEventParticipants } : "skip"
   );
+};
 
-  const handleAttendies = (event: {
-    _id: Id<"events">;
-    name: string;
-    organiser: string;
-    attendees: number;
-    date: string;
-    description: string;
-    image: string;
-    payment: string;
-    participants: string[];
-    isCompleted: boolean;
-  }) => {
+  const handleAttendies = (event: Event) => {
     console.log("Event:", event);
     setSelectedEvent(event);
     setSelectedEventParticipants(event.participants || []);
-    const participantsData = useQuery(
-      api.database.getMultipleUsers,
-      selectedEventParticipants.length > 0 ? { userIds: selectedEventParticipants } : "skip"
-    );
     setAttendies(true);
   };
 
@@ -339,6 +326,7 @@ export const Events = () => {
                     description: "",
                     image: "",
                     payment: "",
+                    participants: [],
                     isCompleted: false,
                   });
                 } else {
