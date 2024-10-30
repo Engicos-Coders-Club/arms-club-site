@@ -1,10 +1,33 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../Context';
 import { Id } from '../../../convex/_generated/dataModel';
+import { useUser } from '@clerk/nextjs';
 
 const CartPage: React.FC = () => {
+  const { isSignedIn, user } = useUser();
   const { cartItems, removeFromCart, updateCartItemQuantity, cartTotal, cartCount } = useCart();
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user?.fullName || "",
+    email: user?.emailAddresses[0].emailAddress || "",
+    paymentImage: null as File | null,
+  });
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value,
+    }));
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Form data:", formData);
+    setShowForm(false);
+    alert("Payment details submitted!");
+  };
 
   const handleIncreaseQuantity = (productId:Id<"products">) => {
     const product = cartItems.find((item) => item.product.id === productId);
@@ -103,12 +126,53 @@ const CartPage: React.FC = () => {
               <h2 className="text-xl font-semibold">Total Items: {cartCount}</h2>
               <h2 className="text-xl font-semibold">Total Price: ${cartTotal.toFixed(2)}</h2>
             </div>
-            <button
-              className="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-950 transition-colors mt-4 sm:mt-0"
-              onClick={handleBuy}
-            >
-              Proceed to Checkout
-            </button>
+            <button onClick={() => setShowForm(true)} className="px-6 py-3 bg-blue-900 text-white rounded-lg">
+          Proceed to Checkout
+        </button>
+          </div>
+        </div>
+      )}
+      {showForm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-8 shadow-lg max-w-lg w-full">
+            <h2 className="text-2xl font-semibold mb-4">Complete Payment</h2>
+            <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${window.location.href}&amp;size=200x200`} alt="QR Code" className="h-32 mx-auto mb-4" />
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                value={formData.name}
+                onChange={handleFormChange}
+                className="w-full p-3 border rounded-md"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleFormChange}
+                className="w-full p-3 border rounded-md"
+                required
+              />
+              <input
+                type="file"
+                name="paymentImage"
+                onChange={handleFormChange}
+                accept="image/*"
+                className="w-full p-3 border rounded-md"
+                required
+              />
+              <div className="flex justify-end space-x-4">
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">
+                  Submit
+                </button>
+                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 bg-gray-400 text-white rounded-md">
+                  Close
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

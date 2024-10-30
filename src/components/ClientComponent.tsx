@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Id } from "../../convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { UploadButton } from "@uploadthing/react";
 
 export const ClientComponent = ({ userId }: { userId: string }) => {
   const [isAuthenticated, setisAuthenticated] = useState(false);
@@ -40,7 +41,9 @@ type Event = {
   date: string;
   description: string;
   image: string;
+  payment: string;
   isCompleted: boolean;
+  participants: string[];
 };
 
 type Product = {
@@ -68,11 +71,14 @@ export const Events = () => {
     date: "",
     description: "",
     image: "",
+    payment: "",
+    participants: [],
     isCompleted: false,
     ...events,
   });
 
   const [selectedEvent, setSelectedEvent] = useState<{
+    participants: [];
     _id: Id<"events">;
     name: string;
     organiser: string;
@@ -97,8 +103,13 @@ export const Events = () => {
     image: string;
   } | null>(null);
 
+  const [selectedEventParticipants, setSelectedEventParticipants] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [attendies, setAttendies] = useState(false);
+  const [partiArr, setPartiArr] = useState<
+    { _id: Id<"users">; _creationTime: number; branch?: string; year?: number; rollNo?: string; name: string; userId: string; email: string; }[] | undefined
+  >([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -116,6 +127,8 @@ export const Events = () => {
     date: string;
     description: string;
     image: string;
+    payment: string;
+    participants: [];
     isCompleted: boolean;
   }) => {
     setSelectedEvent(event);
@@ -127,9 +140,25 @@ export const Events = () => {
       date: event.date,
       description: event.description,
       image: event.image,
+      payment: event.payment,
+      participants: [],
       isCompleted: event.isCompleted,
     });
     setIsDialogOpen(true);
+  };
+
+const fetchParticipantsData = () => {
+  return useQuery(
+    api.database.getMultipleUsers,
+    selectedEventParticipants.length > 0 ? { userIds: selectedEventParticipants } : "skip"
+  );
+};
+
+  const handleAttendies = (event: Event) => {
+    console.log("Event:", event);
+    setSelectedEvent(event);
+    setSelectedEventParticipants(event.participants || []);
+    setAttendies(true);
   };
 
   const update = async (storageId: Id<"events">) => {
@@ -192,17 +221,25 @@ export const Events = () => {
               <strong>Organizer:</strong> {event.organiser}
             </p>
             <p className="text-gray-700">
-              <strong>Attendees:</strong> {event.attendees}
+              <strong>Attendees:</strong> {event.participants.length}
             </p>
             <p className="text-gray-700">
               <strong>Date:</strong> {event.date}
             </p>
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-evenly mt-6">
               <button
                 className="px-3 py-2 text-white transition duration-300 bg-yellow-500 rounded-md hover:bg-yellow-600"
-                onClick={() => handleEdit(event)}
+                onClick={() =>
+                  handleEdit({ ...event, payment: event.payment || "", participants: event.participants || [] })
+                }
               >
                 Edit
+              </button>
+              <button
+                className="px-3 py-2 text-white transition duration-300 bg-yellow-500 rounded-md hover:bg-yellow-600"
+                onClick={() => handleAttendies({ ...event, payment: event.payment || "", participants: event.participants || [] })}
+              >
+                Attendies
               </button>
               <button
                 className="px-3 py-2 text-white transition duration-300 bg-red-500 rounded-md hover:bg-red-600"
@@ -214,6 +251,51 @@ export const Events = () => {
           </div>
         ))}
       </div>
+      {attendies && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
+            <h2 className="mb-4 text-2xl font-semibold text-black">Attendees</h2>
+            <div className="flex flex-col space-y-4 h-[60vh] overflow-y-scroll">
+              {participantsData && participantsData.length > 0 ? (
+                participantsData.map((participant) => (
+                  <div
+                    key={participant.userId}
+                    className="p-4 bg-gray-100 rounded-md shadow"
+                  >
+                    <p className="font-medium">{participant.name}</p>
+                    <p className="text-sm text-gray-600">{participant.email}</p>
+                    {participant.branch && (
+                      <p className="text-sm text-gray-600">
+                        Branch: {participant.branch}
+                      </p>
+                    )}
+                    {participant.year && (
+                      <p className="text-sm text-gray-600">
+                        Year: {participant.year}
+                      </p>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 text-center text-gray-500">
+                  No attendees yet.
+                </div>
+              )}
+            </div>
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => {
+                  setAttendies(false);
+                  setSelectedEventParticipants([]);
+                }}
+                className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {isDialogOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
@@ -227,6 +309,7 @@ export const Events = () => {
                     name: formData.name,
                     description: formData.description,
                     image: formData.image,
+                    payment: formData.payment,
                     date: formData.date,
                     attendees: formData.attendees,
                     isCompleted: formData.isCompleted,
@@ -242,6 +325,8 @@ export const Events = () => {
                     date: "",
                     description: "",
                     image: "",
+                    payment: "",
+                    participants: [],
                     isCompleted: false,
                   });
                 } else {
@@ -249,6 +334,7 @@ export const Events = () => {
                     name: formData.name,
                     description: formData.description,
                     image: formData.image,
+                    payment: formData.payment,
                     date: formData.date,
                     attendees: formData.attendees,
                     isCompleted: formData.isCompleted,
@@ -309,6 +395,24 @@ export const Events = () => {
                 required
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <div className="w-full">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Add QR Code
+                </label>
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res: { url: any }[]) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      payment: res[res.length - 1].url,
+                    }));
+                    alert("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    alert(`ERROR while uploading! ${error.message}`);
+                  }}
+                />
+              </div>
               <input
                 name="isCompleted"
                 type="checkbox"
@@ -342,6 +446,7 @@ export const Events = () => {
                       date: "",
                       description: "",
                       image: "",
+                      payment: "",
                       isCompleted: false,
                     });
                   }}
