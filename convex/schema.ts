@@ -34,6 +34,19 @@ export default defineSchema({
     price: v.number(),
     description: v.string(),
     image: v.string(),
-  })
+  }),
+
+  feedback: defineTable({
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    rating: v.number(), // 1-5 rating
+    organization: v.number(), // 1-5 rating
+    content: v.number(), // 1-5 rating
+    venue: v.number(), // 1-5 rating
+    overallExperience: v.number(), // 1-5 rating
+    comments: v.string(),
+    wouldRecommend: v.boolean(),
+    submittedAt: v.string(),
+  }),
 
 });

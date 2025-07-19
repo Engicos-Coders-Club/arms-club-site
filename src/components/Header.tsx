@@ -10,6 +10,7 @@ const Header = () => {
     { href: "/product", label: "Product" },
     { href: "/team", label: "Team" },
     { href: "/events", label: "Events" },
+     ...(userId ? [{ href: "/feedback", label: "Feedback" }] : []),
     {
       href: userId ? "/cart" : "/sign-up",
       label: userId ? "Cart" : "Sign In",

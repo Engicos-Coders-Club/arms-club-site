@@ -295,3 +295,92 @@ export const unattendEvent = mutation({
     return true;
   },
 });
+
+
+// Feedback related functions
+export const submitFeedback = mutation({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    rating: v.number(),
+    organization: v.number(),
+    content: v.number(),
+    venue: v.number(),
+    overallExperience: v.number(),
+    comments: v.string(),
+    wouldRecommend: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    // Check if user already submitted feedback for this event
+    const existingFeedback = await ctx.db
+      .query("feedback")
+      .filter((q) => q.and(q.eq(q.field("eventId"), args.eventId), q.eq(q.field("userId"), args.userId)))
+      .first()
+
+    if (existingFeedback) {
+      throw new Error("You have already submitted feedback for this event")
+    }
+
+    // Verify user was a participant
+    const event = await ctx.db.get(args.eventId)
+    if (!event || !event.participants.includes(args.userId)) {
+      throw new Error("You must have attended the event to submit feedback")
+    }
+
+    await ctx.db.insert("feedback", {
+      eventId: args.eventId,
+      userId: args.userId,
+      rating: args.rating,
+      organization: args.organization,
+      content: args.content,
+      venue: args.venue,
+      overallExperience: args.overallExperience,
+      comments: args.comments,
+      wouldRecommend: args.wouldRecommend,
+      submittedAt: new Date().toISOString(),
+    })
+
+    return true
+  },
+})
+
+export const getUserFeedback = query({
+  args: {
+    eventId: v.id("events"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("feedback")
+      .filter((q) => q.and(q.eq(q.field("eventId"), args.eventId), q.eq(q.field("userId"), args.userId)))
+      .first()
+  },
+})
+
+export const getEventFeedback = query({
+  args: { eventId: v.id("events") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("feedback")
+      .filter((q) => q.eq(q.field("eventId"), args.eventId))
+      .collect()
+  },
+})
+
+export const getUserPastEvents = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const allEvents = await ctx.db.query("events").collect()
+    const currentDate = new Date()
+
+    // Filter events where user was a participant and event is in the past
+    const pastEvents = allEvents.filter((event) => {
+      const eventDate = new Date(event.date)
+      const isPastEvent = eventDate < currentDate || event.isCompleted
+      const wasParticipant = event.participants.includes(args.userId)
+      return isPastEvent && wasParticipant
+    })
+
+    return pastEvents
+  },
+})
