@@ -1,53 +1,62 @@
-'use client'
-import React from 'react';
-import Image from 'next/image';
-import { clubMembers } from '../../../public/team';
-import { FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa6";
+"use client"
+import Image from "next/image"
+import { clubMembers } from "../../../public/team"
+import { FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa6"
 
 const TeamPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-16">
-
-      <div className="px-4 mx-auto max-w-7xl relative">
-        {/* Robotic Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-gray-600 to-gray-500 mb-4">
-            Meet Our Robotics Team
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 py-20">
+      <div className="px-6 mx-auto max-w-7xl lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-20 mt-16">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-black">
+            Meet Our Team
           </h1>
-          <div className="w-24 h-1 bg-gray-500 mx-auto rounded-full"></div>
+          <div className="w-32 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full mb-8"></div>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Our passionate team of robotics enthusiasts, innovators, and leaders working together to push the boundaries
+            of technology
+          </p>
         </div>
 
         {/* Team Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {clubMembers.map((member) => (
             <div key={member.id} className="group">
-              {/* Member Card */}
-              <div className="relative bg-white rounded-lg p-6 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl border border-gray-100">
-                {/* Decorative Corner Elements */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-gray-500"></div>
-                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-gray-500"></div>
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-gray-500"></div>
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-gray-500"></div>
+              <div className="relative bg-white rounded-2xl p-8 transition-all duration-300 transform hover:-translate-y-3 hover:shadow-2xl border border-gray-100 overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full -translate-y-10 translate-x-10 opacity-50"></div>
 
                 {/* Profile Image */}
                 <div className="relative mb-6 group-hover:scale-105 transition-transform duration-300">
-                  <div className="absolute inset-0 bg-gray-500/20 rounded-full blur-md opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                  <Image
-                    src={member.image}
-                    alt={member.name}
-                    width={150}
-                    height={150}
-                    className="relative mx-auto rounded-full border-2 border-gray-500"
-                  />
+                  <div className="relative">
+                    <Image
+                      src={member.image || "/placeholder.svg"}
+                      alt={member.name}
+                      width={120}
+                      height={120}
+                      className="mx-auto rounded-full border-4 border-gray-100 group-hover:border-blue-200 transition-colors duration-300"
+                    />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
                 </div>
 
                 {/* Member Info */}
-                <div className="text-center">
-                  <h2 className="text-lg font-bold text-gray-800 mb-1">{member.name}</h2>
-                  <p className="text-blue-600 font-medium mb-1">{member.position}</p>
-                  <p className="text-gray-600 text-sm mb-4">
-                    {member.year} Year, {member.branch}
-                  </p>
+                <div className="text-center relative z-10">
+                  <h2 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+                    {member.name}
+                  </h2>
+
+                  <div className="mb-3">
+                    <span className="inline-block px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 text-sm font-semibold rounded-full">
+                      {member.position}
+                    </span>
+                  </div>
+
+                  <div className="text-gray-600 text-sm mb-6 space-y-1">
+                    <p className="font-medium">{member.year} Year</p>
+                    <p>{member.branch}</p>
+                  </div>
 
                   {/* Social Links */}
                   <div className="flex justify-center space-x-4">
@@ -55,7 +64,7 @@ const TeamPage = () => {
                       href={member.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-blue-600 transition-colors"
+                      className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 hover:bg-blue-100 hover:text-blue-600 transition-all duration-300 transform hover:scale-110"
                     >
                       <FaLinkedin className="w-5 h-5" />
                     </a>
@@ -63,7 +72,7 @@ const TeamPage = () => {
                       href={member.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-gray-800 transition-colors"
+                      className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-300 transform hover:scale-110"
                     >
                       <FaGithub className="w-5 h-5" />
                     </a>
@@ -71,7 +80,7 @@ const TeamPage = () => {
                       href={member.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-pink-500 transition-colors"
+                      className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white transition-all duration-300 transform hover:scale-110"
                     >
                       <FaInstagram className="w-5 h-5" />
                     </a>
@@ -79,14 +88,27 @@ const TeamPage = () => {
                 </div>
 
                 {/* Hover Effect Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-500/0 via-gray-500/5 to-gray-200/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"></div>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-20">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-3xl p-12 text-white shadow-2xl">
+            <h3 className="text-3xl font-bold mb-4">Want to Join Our Team?</h3>
+            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+              We're always looking for passionate individuals to join our robotics community
+            </p>
+            <button className="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+              Get Involved
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TeamPage;
+export default TeamPage
